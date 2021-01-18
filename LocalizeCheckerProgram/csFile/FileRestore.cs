@@ -25,22 +25,22 @@ namespace LocalizeChecker
 
         public static bool RestoreFiles(List<string> filePaths, string solutionName)
         {
-        
-            string targetPath = $"{Application.StartupPath}\\Backup\\{solutionName}";
-
-            if (!Directory.Exists(targetPath))
-            {
-                return false;
-            }
-
+            restorationFailedFilesInfos = new List<RestorationFailedFilesInfo>();
             int index = 0;
             try
             {
                 foreach (string filePath in filePaths)
                 {
-                    string fileName = $"backup{++index}.resx";
-                    string sourceFile = Path.Combine(targetPath, fileName);
+                    string sourceFile = filePath + ".#localizer#";
+
+                    if (!File.Exists(sourceFile))
+                    {
+                        return false;
+                    }
+
                     File.Copy(sourceFile, filePath, true);
+                    File.Delete(sourceFile);
+                    index++;
                 }
             }
             catch (Exception e)
@@ -48,7 +48,6 @@ namespace LocalizeChecker
                 restorationFailedFilesInfos.Add(new RestorationFailedFilesInfo(index, "backup파일을 만드는데 실패했습니다.", e.Message));
             }
 
-            Directory.Delete(targetPath, true);
             return true;
         }
     }

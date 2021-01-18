@@ -56,9 +56,12 @@
             </TextBlock>
 
             <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
-                <TextBlock Name ="fileNum"  Text="파일: 0 "/>
-                <TextBlock Name ="successNum"  Text="성공: 0 "/>
-                <TextBlock Name ="failedNum" Text="실패: 0"/>
+                <TextBlock Text="파일: "></TextBlock>
+                <TextBlock Name ="fileNum"  Text="0"/>
+                <TextBlock Text=" 성공: "></TextBlock>
+                <TextBlock Name ="successfulFileNum"  Text="0"/>
+                <TextBlock Text=" 실패: "></TextBlock>
+                <TextBlock Name ="failedFileNum" Text="0"/>
             </StackPanel>
         </Grid>
 

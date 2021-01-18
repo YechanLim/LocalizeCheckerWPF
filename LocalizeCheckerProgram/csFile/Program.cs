@@ -6,7 +6,7 @@ namespace LocalizeChecker
 {
     class Program
     {
-        static List<string> filePaths = new List<string>();
+        public static List<string> filePaths = new List<string>();
         public static LogTableInfo[] logTableInfos;
 
         public static bool Stretch(string[] args)
@@ -14,7 +14,7 @@ namespace LocalizeChecker
             string solutionFilePath = args[0];
             filePaths = FilePathFinder.GetResxFilePathList(FilePathFinder.GetCSprojFilePathList(solutionFilePath));
             
-            if (!FileSave.SaveBackupFiles(filePaths, Path.GetFileName(solutionFilePath)))
+            if (!FileSave.SaveBackupFiles(filePaths))
             {
                 return false;
             }

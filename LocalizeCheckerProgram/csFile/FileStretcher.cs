@@ -29,6 +29,7 @@ namespace LocalizeChecker
 
         public void StretchFiles(List<string> filePaths)
         {
+            stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();ㄴ
             const string tempFile = "temp.txt";
             string line;
 

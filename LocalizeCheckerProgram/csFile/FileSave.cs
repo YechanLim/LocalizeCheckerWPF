@@ -7,21 +7,16 @@ namespace LocalizeChecker
 {
     class FileSave
     {
-        public static bool SaveBackupFiles(List<string> filePaths, string solutionName)
+        public static bool SaveBackupFiles(List<string> filePaths)
         {
-            string targetPath = $"{Application.StartupPath}\\Backup\\{solutionName}";
-
-            if (Directory.Exists(targetPath))
-            {
-                return false;
-            }
-
-            Directory.CreateDirectory(targetPath);
-            int index = 0;
             foreach (string filePath in filePaths)
             {
-                string fileName = $"backup{++index}.resx";
-                string destinationFile = Path.Combine(targetPath, fileName);
+                string destinationFile = filePath + ".#localizer#";
+                if (File.Exists(destinationFile))
+                {
+                    return false;
+                }
+
                 File.Copy(filePath, destinationFile, true);
             }
             return true;

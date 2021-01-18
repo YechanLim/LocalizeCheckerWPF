@@ -31,6 +31,7 @@ namespace LocalizeCheckerProgram
                 filePathTextBlock.ToolTip = openFileDialog.FileName;
                 stretchingAlertText.Text = "";
                 restorationAlertText.Text = "";
+                SetLogNumberText(0, 0);
                 MakeDataGrid(new LogTableInfo[0]);
             }
         }
@@ -54,6 +55,7 @@ namespace LocalizeCheckerProgram
             string[] filePath = { filePathTextBlock.Text };
             if (Program.Stretch(filePath) == false)
             {
+                SetLogNumberText(0,0);
                 stretchingAlertText.Text = StretchingFailedMessage;
                 return;
             }
@@ -61,6 +63,7 @@ namespace LocalizeCheckerProgram
             //progressPage.ShowDialog();
 
             ////this.NavigationService.Navigate(new Uri("Progress.xaml", UriKind.Relative));
+            SetLogNumberText(Program.filePaths.Count, FileStretcher.stretchFailedFilesInfos.Count);
             restorationAlertText.Text = "";
             stretchingAlertText.Text = "";
             MakeDataGrid(Program.logTableInfos);
@@ -77,13 +80,21 @@ namespace LocalizeCheckerProgram
             string[] filePath = { filePathTextBlock.Text };
             if (Program.Restore(filePath) == false)
             {
+                SetLogNumberText(0, 0);
                 restorationAlertText.Text = RestorationFailedMessage;
                 return;
             }
-
+            SetLogNumberText(Program.filePaths.Count, FileRestore.restorationFailedFilesInfos.Count);
             restorationAlertText.Text = "";
             stretchingAlertText.Text = "";
             MakeDataGrid(Program.logTableInfos);
+        }
+
+        private void SetLogNumberText(int total, int failure)
+        {
+            fileNum.Text = total.ToString();
+            successfulFileNum.Text = (total - failure).ToString();
+            failedFileNum.Text = failure.ToString();
         }
     }
 }
