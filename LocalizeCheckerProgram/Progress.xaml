@@ -8,6 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Progress"
       ContentRendered="Window_ContentRendered"
+        Width="700" Height="250"
       >
     <!--ShowsNavigationUI="False"-->
 
@@ -35,7 +36,7 @@
                 [success]  D:\개발 소스\MD-RED\RED\Resources\LocalResources.resx
             </TextBlock>
             
-            <Button Content="취소" Width="150" Height="30" Margin="20" BorderBrush="White"></Button>
+            <Button Name="cancel_Button" Click="cancel_Button_Click" Content="취소" Width="150" Height="30" Margin="20" BorderBrush="White"></Button>
 
         </StackPanel>
 

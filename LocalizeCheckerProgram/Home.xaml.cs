@@ -11,16 +11,19 @@ namespace LocalizeCheckerProgram
 {
     public partial class Home : Page
     {
-        string fileSelectionAlertMessage = "선택된 파일이 없습니다.";
+        string fileSelectionMissingMessage = "선택된 파일이 없습니다.";
         string StretchingFailedMessage = "이미 변환된 파일입니다.";
         string RestorationFailedMessage = "이미 복원된 파일입니다.";
+        public static string[] filePath;
+        public static bool isAsycStretch = false;
+
         public Home()
         {
             InitializeComponent();
-            filePathTextBlock.Text = fileSelectionAlertMessage;
+            filePathTextBlock.Text = fileSelectionMissingMessage;
         }
 
-        private void SelectFileDialogButton_Click(object sender, RoutedEventArgs e)
+        private void SelectFileDialog_Button_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Solution Files (*.sln)|*.sln";
@@ -29,65 +32,77 @@ namespace LocalizeCheckerProgram
             {
                 filePathTextBlock.Text = openFileDialog.FileName;
                 filePathTextBlock.ToolTip = openFileDialog.FileName;
-                stretchingAlertText.Text = "";
-                restorationAlertText.Text = "";
+                InitializeAlertText();
                 SetLogNumberText(0, 0);
                 MakeDataGrid(new LogTableInfo[0]);
             }
         }
 
-        private void MakeDataGrid(LogTableInfo[] resultTableLogInfos)
+        private async void StretchFiles_Button_Click(object sender, RoutedEventArgs e)
         {
-            dataGrid.ItemsSource = resultTableLogInfos;
-            int count = dataGrid.Columns.Count;
-            dataGrid.Columns[count -1].Header = "";
-            dataGrid.Columns[count -1].Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-        }
-
-        private void StretchFiles_Click(object sender, RoutedEventArgs e)
-        {
-            if (filePathTextBlock.Text == fileSelectionAlertMessage)
+            if (filePathTextBlock.Text == fileSelectionMissingMessage)
             {
-                stretchingAlertText.Text = fileSelectionAlertMessage;
+                stretchingAlertText.Text = fileSelectionMissingMessage;
                 return;
             }
+            string[] filePath_temp = { filePathTextBlock.Text };
+            filePath = filePath_temp;
+            isAsycStretch = true;
+            Progress progressPage = new Progress();
+            OpenProgressPage(progressPage);
 
-            string[] filePath = { filePathTextBlock.Text };
-            if (Program.Stretch(filePath) == false)
+            if (progressPage.isAlreadyStretched)
             {
-                SetLogNumberText(0,0);
+                SetLogNumberText(0, 0);
                 stretchingAlertText.Text = StretchingFailedMessage;
+                MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
-            //var progressPage = new Progress();
-            //progressPage.ShowDialog();
 
-            ////this.NavigationService.Navigate(new Uri("Progress.xaml", UriKind.Relative));
             SetLogNumberText(Program.filePaths.Count, FileStretcher.stretchFailedFilesInfos.Count);
-            restorationAlertText.Text = "";
-            stretchingAlertText.Text = "";
+            InitializeAlertText();
             MakeDataGrid(Program.logTableInfos);
         }
 
-        private void RestoreFiles_Click(object sender, RoutedEventArgs e)
+        private void RestoreFiles_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (filePathTextBlock.Text == fileSelectionAlertMessage)
+            if (filePathTextBlock.Text == fileSelectionMissingMessage)
             {
-                restorationAlertText.Text = fileSelectionAlertMessage;
+                restorationAlertText.Text = fileSelectionMissingMessage;
                 return;
             }
 
-            string[] filePath = { filePathTextBlock.Text };
-            if (Program.Restore(filePath) == false)
+            string[] filePath1 = { filePathTextBlock.Text };
+            filePath = filePath1;
+            isAsycStretch = false;
+            Progress progressPage = new Progress();
+            OpenProgressPage(progressPage);
+
+            if (progressPage.isAlreadyRestored)
             {
                 SetLogNumberText(0, 0);
                 restorationAlertText.Text = RestorationFailedMessage;
+                MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
+
             SetLogNumberText(Program.filePaths.Count, FileRestore.restorationFailedFilesInfos.Count);
-            restorationAlertText.Text = "";
-            stretchingAlertText.Text = "";
+            InitializeAlertText();
             MakeDataGrid(Program.logTableInfos);
+        }
+
+        private void OpenProgressPage(Progress progressPage)
+        {
+            progressPage.Owner = Window.GetWindow(this);
+            progressPage.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            progressPage.ShowDialog();
+        }
+
+        private void MakeDataGrid(LogTableInfo[] resultTableLogInfos)
+        {
+            dataGrid.ItemsSource = resultTableLogInfos;
+            dataGrid.Columns[dataGrid.Columns.Count - 1].Header = "";
+            dataGrid.Columns[dataGrid.Columns.Count - 1].Width = new DataGridLength(1, DataGridLengthUnitType.Star);
         }
 
         private void SetLogNumberText(int total, int failure)
@@ -95,6 +110,12 @@ namespace LocalizeCheckerProgram
             fileNum.Text = total.ToString();
             successfulFileNum.Text = (total - failure).ToString();
             failedFileNum.Text = failure.ToString();
+        }
+
+        private void InitializeAlertText()
+        {
+            stretchingAlertText.Text = "";
+            restorationAlertText.Text = "";
         }
     }
 }

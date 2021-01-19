@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace LocalizeChecker
 {
@@ -23,7 +24,7 @@ namespace LocalizeChecker
     {
         public static List<RestorationFailedFilesInfo> restorationFailedFilesInfos = new List<RestorationFailedFilesInfo>();
 
-        public static bool RestoreFiles(List<string> filePaths, string solutionName)
+        public static bool RestoreFiles(List<string> filePaths, object sender)
         {
             restorationFailedFilesInfos = new List<RestorationFailedFilesInfo>();
             int index = 0;
@@ -41,6 +42,9 @@ namespace LocalizeChecker
                     File.Copy(sourceFile, filePath, true);
                     File.Delete(sourceFile);
                     index++;
+
+                    int percentProgress = (int)((index * 100) / (filePaths.Count - 1));
+                    (sender as BackgroundWorker).ReportProgress(percentProgress, filePath);
                 }
             }
             catch (Exception e)

@@ -44,9 +44,10 @@ namespace LocalizeChecker
                     logTableInfos[index].결과 = "실패\n원인: " + stretchingFailedFilesInfos[failedFileIndex].ResultMessage;
                     logTableInfos[index].Remark = stretchingFailedFilesInfos[failedFileIndex].RemarkMessage;
                     failedFileIndex++;
+                    Console.WriteLine($"[실패]  {filePath}");
                     continue;
                 }
-
+                Console.WriteLine($"[성공]  {filePath}");
                 logTableInfos[index].결과 = "성공";
                 logTableInfos[index].Remark = "";
             }
@@ -75,6 +76,7 @@ namespace LocalizeChecker
 
                 logTableInfos[index].결과 = "성공";
                 logTableInfos[index].Remark = "";
+
             }
 
             return logTableInfos;

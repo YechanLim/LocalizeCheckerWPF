@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.ComponentModel;
 
 namespace LocalizeChecker
 {
@@ -23,13 +24,14 @@ namespace LocalizeChecker
         LineChecker lineChecker = new LineChecker();
         LineStretcher lineStretcher = new LineStretcher();
         public static List<StretchingFailedFilesInfo> stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();
-        public static int filePathsIndex = -1;
+        public static int index;
         bool isAlreadyStretchedFile = false;
         bool isFailedToInsertCharacters = false;
 
-        public void StretchFiles(List<string> filePaths)
+        public void StretchFiles(List<string> filePaths, object sender)
         {
-            stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();ㄴ
+            index = -1;
+            stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();
             const string tempFile = "temp.txt";
             string line;
 
@@ -37,12 +39,12 @@ namespace LocalizeChecker
             {
                 lineChecker.IsIncludedInDataNode = false;
                 lineChecker.IsMultiLineValueNode = false;
-                filePathsIndex++;
+                index++;
                 EraseDuplicatedFile(tempFile);
 
                 if (!File.Exists(filePath))
                 {
-                    stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(filePathsIndex, "파일이 존재하지 않습니다.", $"{filePath} 파일이 존재하지 않습니다."));
+                    stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "파일이 존재하지 않습니다.", $"{filePath} 파일이 존재하지 않습니다."));
                     continue;
                 }
 
@@ -99,9 +101,15 @@ namespace LocalizeChecker
                 }
                 catch (Exception e)
                 {
-                    stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(filePathsIndex, "resx 파일을 읽는데 오류가 발생했습니다.", $"{e.Message}"));
+                    stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "resx 파일을 읽는데 오류가 발생했습니다.", $"{e.Message}"));
                     Console.WriteLine($"resx 파일을 읽는데 오류가 발생했습니다. 원인: {e.Message}");
                 }
+                for (int i = 0; i < 50000000; i++)
+                {
+
+                }
+                int percentProgress = (int)((index * 100) / (filePaths.Count - 1));
+                (sender as BackgroundWorker).ReportProgress(percentProgress, filePath);
             }
         }
 

@@ -15,7 +15,7 @@ namespace LocalizeChecker
         {
             try
             {
-                int firstIndexOfValueNodeInnerText = line.IndexOf(LineChecker.StartTagOfValueNode) + LineChecker.StartTagOfValueNode.Length + 10;
+                int firstIndexOfValueNodeInnerText = line.IndexOf(LineChecker.StartTagOfValueNode) + LineChecker.StartTagOfValueNode.Length ;
                 int lastIndexOfValueNodeInnerText = line.LastIndexOf(LineChecker.EndTagOfValueNode);
                 int predefinedEntityLength = 0;
                 int minimumNumOfCharactersToInsert = 2;
@@ -60,7 +60,7 @@ namespace LocalizeChecker
             }
             catch (Exception e)
             {
-                FileStretcher.stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(FileStretcher.filePathsIndex, "Line에 character를 추가하는데 오류가 발생했습니다.", $"{e.Message}"));
+                FileStretcher.stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(FileStretcher.index, "Line에 character를 추가하는데 오류가 발생했습니다.", $"{e.Message}"));
                 Console.WriteLine($"Line에 character를 추가하는데 오류가 발생했습니다. 원인: {e.Message}");
                 return null;
             }

@@ -39,7 +39,7 @@
 
             <StackPanel Margin="0,20,0,0" Orientation="Vertical">
                 <Button Style="{StaticResource buttonStyle}" Name="selectFileDialogButton" 
-                        Grid.Row="0" Click="SelectFileDialogButton_Click">
+                        Grid.Row="0" Click="SelectFileDialog_Button_Click">
                     <ContentControl>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="\Images\file_selection.png" Width="35"></Image>
@@ -83,7 +83,7 @@
             <StackPanel Orientation="Vertical" Margin="0,0,40,0">
                 <TextBlock Name ="restorationAlertText" Foreground="red" HorizontalAlignment="Center"></TextBlock>
                 <Button Style="{StaticResource buttonStyle}" Name="localizeRestorationButton"
-                Click="RestoreFiles_Click" >
+                Click="RestoreFiles_Button_Click" >
                 <ContentControl>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="\Images\restoration.png" Width="35"></Image>
@@ -96,7 +96,7 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock Name ="stretchingAlertText" Foreground="red" HorizontalAlignment="Center"></TextBlock>
                 <Button Style="{StaticResource buttonStyle}" Name="localizeStretchButton"
-                Click="StretchFiles_Click">
+                Click="StretchFiles_Button_Click">
                     <ContentControl>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="\Images\stretch.png" Width="25"></Image>
