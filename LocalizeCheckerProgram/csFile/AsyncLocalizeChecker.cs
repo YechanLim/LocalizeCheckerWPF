@@ -17,26 +17,25 @@ namespace LocalizeCheckerProgram
         public BackgroundWorker Worker;
     };
 
-    class Background
+    class AsyncLocalizeChecker
     {
-        public BackgroundWorker worker;
         public LogTableInfo[] logTableInfos = new LogTableInfo[0];
         public bool isAlreadyCompleted = false;
-
-        const string titleText_Revert = "다국어 복원중";
-        const string titleText_Stretch = "다국어 변환중";
-        const string titleText_RevertResult = "결과 복원중";
+        const string RevertTitleText = "다국어 복원중";
+        const string StretchTitleText = "다국어 변환중";
+        const string RevertResultTitleText = "결과 복원중";
         bool isAsyncStretch;
         string filePath;
         Progress progress;
-        
-        public Background(string filePath ,bool isAsyncStretch)
+        BackgroundWorker worker;
+
+        public AsyncLocalizeChecker(string filePath, bool isAsyncStretch)
         {
             this.filePath = filePath;
             this.isAsyncStretch = isAsyncStretch;
         }
 
-        public void Start()
+        public void StartLocalizeCheckerAsync()
         {
             worker = new BackgroundWorker();
             progress = new Progress(worker);
@@ -47,16 +46,16 @@ namespace LocalizeCheckerProgram
 
             if (isAsyncStretch)
             {
+                progress.title.Text = StretchTitleText;
                 worker.DoWork += Worker_DoWork_Stretch;
             }
             else
             {
-                progress.title.Text = titleText_Revert;
+                progress.title.Text = RevertTitleText;
                 worker.DoWork += Worker_DoWork_Revert;
             }
 
             worker.RunWorkerAsync();
-            progress.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             progress.ShowDialog();
         }
 
@@ -68,7 +67,6 @@ namespace LocalizeCheckerProgram
         private void Worker_DoWork_Revert(object sender, DoWorkEventArgs args)
         {
             logTableInfos = Program.Revert(filePath, InitializeBackgroundWorkerParameter(isAsyncStretch, sender, args));
-            Console.WriteLine(logTableInfos.Length);
         }
 
         private BackgroundWorkerParameter InitializeBackgroundWorkerParameter(bool isAsycStretch, object sender, DoWorkEventArgs args)
@@ -87,16 +85,17 @@ namespace LocalizeCheckerProgram
             {
                 MessageBox.Show(e.Error.Message);
             }
-            else if (e.Cancelled)
-            {
-                Console.WriteLine("취소가 완료되었습니다.");
-            }
             else if (progress.progressBarStatus.Value != 100)
             {
                 isAlreadyCompleted = true;
             }
-            Console.WriteLine("completed done");
             progress.Close();
+        }
+
+
+        void DataWindow_Closing(object sender, CancelEventArgs e)
+        {
+            return;
         }
     }
 }

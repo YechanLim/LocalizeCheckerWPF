@@ -17,9 +17,8 @@ namespace LocalizeChecker
 
         public static LogTableInfo[] Stretch(string filePath, BackgroundWorkerParameter backgroundWorkerParameter)
         {
-            
+
             filePaths = FilePathFinder.GetResxFilePathList(FilePathFinder.GetCSprojFilePathList(filePath));
-            LogStore logStore = new LogStore();
             LogTableInfo[] logTableInfos = new LogTableInfo[0];
 
             if (!FileSave.SaveBackupFiles(filePaths))
@@ -31,12 +30,13 @@ namespace LocalizeChecker
             FileStretcher fileStretcher = new FileStretcher();
             fileStretcher.StretchFiles(filePaths, backgroundWorkerParameter);
 
-            if (fileStretcher.isCanceled)
+            if (backgroundWorkerParameter.Worker.CancellationPending)
             {
                 return logTableInfos;
             }
 
-            logTableInfos = logStore.StoreLogOfStretcher(filePaths, FileStretcher.stretchFailedFilesInfos);
+            LogStore logStore = new LogStore();
+            logTableInfos = logStore.StoreLogOfStretcher(filePaths, fileStretcher.stretchingFailedFilesInfos);
             return logTableInfos;
         }
 
@@ -44,11 +44,11 @@ namespace LocalizeChecker
         {
             filePaths = FilePathFinder.GetResxFilePathList(FilePathFinder.GetCSprojFilePathList(filePath));
             LogTableInfo[] logTableInfos = new LogTableInfo[0];
-            FileRevert fileRevert = new FileRevert();
+            FileReverter fileRevert = new FileReverter();
 
             if (!fileRevert.RevertFiles(filePaths, backgroundWorkerParameter, false))
             {
-                Console.WriteLine("취소됐습니다.");
+                Console.WriteLine("복원이 취소됐습니다.");
                 return logTableInfos;
             }
 
@@ -94,7 +94,6 @@ namespace LocalizeChecker
                .WithNotParsed<Options>(e =>
                {
                });
-                //Console.ReadKey();
             }
         }
     }

@@ -11,7 +11,7 @@ namespace LocalizeChecker
     {
         LineChecker lineChecker = new LineChecker();
 
-        public string InsertCharactersToStretchLine(string line, int lineNum, int index)
+        public string InsertCharactersToStretchLine(string line, int lineNum, int index, List<StretchingFailedFilesInfo> stretchingFailedFilesInfos)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace LocalizeChecker
             }
             catch (Exception e)
             {
-                FileStretcher.stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "Line에 character를 추가하는데 오류가 발생했습니다.", $"{e.Message}"));
+                stretchingFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "Line에 character를 추가하는데 오류가 발생했습니다.", $"{e.Message}"));
                 Console.WriteLine($"Line에 character를 추가하는데 오류가 발생했습니다. 원인: {e.Message}");
                 return null;
             }

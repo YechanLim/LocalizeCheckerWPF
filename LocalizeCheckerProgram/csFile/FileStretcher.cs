@@ -26,7 +26,7 @@ namespace LocalizeChecker
     {
         LineChecker lineChecker = new LineChecker();
         LineStretcher lineStretcher = new LineStretcher();
-        public static List<StretchingFailedFilesInfo> stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();
+        public List<StretchingFailedFilesInfo> stretchingFailedFilesInfos = new List<StretchingFailedFilesInfo>();
         public int index;
         public bool isCanceled = false;
 
@@ -36,7 +36,7 @@ namespace LocalizeChecker
         public void StretchFiles(List<string> filePaths, BackgroundWorkerParameter backgroundWorkerParameter)
         {
             index = -1;
-            stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();
+            stretchingFailedFilesInfos = new List<StretchingFailedFilesInfo>();
             const string tempFile = "temp.txt";
             string line;
 
@@ -49,7 +49,7 @@ namespace LocalizeChecker
 
                 if (!File.Exists(filePath))
                 {
-                    stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "파일이 존재하지 않습니다.", $"{filePath} 파일이 존재하지 않습니다."));
+                    stretchingFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "파일이 존재하지 않습니다.", $"{filePath} 파일이 존재하지 않습니다."));
                     continue;
                 }
 
@@ -106,7 +106,7 @@ namespace LocalizeChecker
                 }
                 catch (Exception e)
                 {
-                    stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "resx 파일을 읽는데 오류가 발생했습니다.", $"{e.Message}"));
+                    stretchingFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "resx 파일을 읽는데 오류가 발생했습니다.", $"{e.Message}"));
                     Console.WriteLine($"resx 파일을 읽는데 오류가 발생했습니다. 원인: {e.Message}");
                 }
 
@@ -128,7 +128,7 @@ namespace LocalizeChecker
             Thread.Sleep(100);
             if (backgroundWorkerParameter.Worker.CancellationPending && backgroundWorkerParameter.IsAsynStretch)
             {
-                FileRevert fileRevert = new FileRevert();
+                FileReverter fileRevert = new FileReverter();
                 fileRevert.RevertFiles(filePaths, backgroundWorkerParameter, false);
                 //backgroundWorkerParameter.args.Cancel = true;
                 Console.WriteLine("canceled");

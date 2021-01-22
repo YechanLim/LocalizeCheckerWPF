@@ -11,83 +11,75 @@ namespace LocalizeCheckerProgram
 {
     public partial class Home : Page
     {
-        string fileSelectionMissingMessage = "선택된 파일이 없습니다.";
-        string StretchingFailedMessage = "이미 변환된 파일입니다.";
-        string reversionFailedMessage = "이미 복원된 파일입니다.";
-        public static string filePath;
+        const string fileSelectionMissingMessage = "선택된 파일이 없습니다.";
+        const string StretchingFailedMessage = "이미 변환된 파일입니다.";
+        const string reversionFailedMessage = "이미 복원된 파일입니다.";
+        const string solutionFileFilter = "Solution Files (*.sln)|*.sln";
+        string filePath;
 
         public Home()
         {
             InitializeComponent();
-            filePathTextBlock.Text = fileSelectionMissingMessage;
+            filePathText.Text = fileSelectionMissingMessage;
         }
 
         private void SelectFileDialog_Button_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Solution Files (*.sln)|*.sln";
+            openFileDialog.Filter = solutionFileFilter;
 
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                filePathTextBlock.Text = openFileDialog.FileName;
-                filePathTextBlock.ToolTip = openFileDialog.FileName;
+                filePathText.Text = openFileDialog.FileName;
+                filePathText.ToolTip = openFileDialog.FileName;
                 InitializeAlertText();
-                SetLogNumberText(new LogTableInfo[0]);
+                SetResultLogNumber(new LogTableInfo[0]);
                 MakeDataGrid(new LogTableInfo[0]);
             }
         }
 
         private void StretchFiles_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (filePathTextBlock.Text == fileSelectionMissingMessage)
+            if (filePathText.Text == fileSelectionMissingMessage)
             {
                 stretchingAlertText.Text = fileSelectionMissingMessage;
                 return;
             }
 
-            filePath = filePathTextBlock.Text;
-            Background background = new Background(filePath,true);
-            background.Start();
+            filePath = filePathText.Text;
+            AsyncLocalizeChecker localizeChecker_Background = new AsyncLocalizeChecker(filePath, true);
+            localizeChecker_Background.StartLocalizeCheckerAsync();
 
-            if (background.isAlreadyCompleted)
+            SetResultLogNumber(localizeChecker_Background.logTableInfos);
+            MakeDataGrid(localizeChecker_Background.logTableInfos);
+            if (localizeChecker_Background.isAlreadyCompleted)
             {
-                SetLogNumberText(background.logTableInfos);
                 stretchingAlertText.Text = StretchingFailedMessage;
-                MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
-
-            SetLogNumberText(background.logTableInfos);
             InitializeAlertText();
-            MakeDataGrid(background.logTableInfos);
         }
 
         private void RevertFiles_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (filePathTextBlock.Text == fileSelectionMissingMessage)
+            if (filePathText.Text == fileSelectionMissingMessage)
             {
                 reversionAlertText.Text = fileSelectionMissingMessage;
                 return;
             }
+            filePath = filePathText.Text;
+            AsyncLocalizeChecker localizeChecker_Background = new AsyncLocalizeChecker(filePath, false);
+            localizeChecker_Background.StartLocalizeCheckerAsync();
 
-            filePath = filePathTextBlock.Text;
-            Background background = new Background(filePath, false);
-            background.Start();
-
-
-            if (background.isAlreadyCompleted)
+            SetResultLogNumber(localizeChecker_Background.logTableInfos);
+            MakeDataGrid(localizeChecker_Background.logTableInfos);
+            if (localizeChecker_Background.isAlreadyCompleted)
             {
-                SetLogNumberText(background.logTableInfos);
                 reversionAlertText.Text = reversionFailedMessage;
-                MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
-
-            SetLogNumberText(background.logTableInfos);
             InitializeAlertText();
-            MakeDataGrid(background.logTableInfos);
         }
-
 
         private void MakeDataGrid(LogTableInfo[] resultTableLogInfos)
         {
@@ -103,10 +95,9 @@ namespace LocalizeCheckerProgram
             }
         }
 
-        private void SetLogNumberText(LogTableInfo[] logTableInfos)
+        private void SetResultLogNumber(LogTableInfo[] logTableInfos)
         {
             fileNum.Text = logTableInfos.Length.ToString();
-
             if (logTableInfos.Length == 0)
             {
                 successfulFileNum.Text = "0";

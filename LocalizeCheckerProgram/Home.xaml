@@ -51,7 +51,7 @@
                    로그 기록</TextBlock>
             </StackPanel>
 
-            <TextBlock Name="filePathTextBlock" Grid.Column="1" Margin="20,40,20,0" 
+            <TextBlock Name="filePathText" Grid.Column="1" Margin="20,40,20,0" 
                         HorizontalAlignment="Left" FontSize="14" TextTrimming="WordEllipsis" >
             </TextBlock>
 

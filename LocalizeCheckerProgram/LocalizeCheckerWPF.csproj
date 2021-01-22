@@ -89,19 +89,19 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Background.cs" />
+    <Compile Include="csFile\AsyncLocalizeChecker.cs" />
     <Compile Include="csFile\MessageBoxHelper.cs" />
     <Compile Include="csFile\CharacterCollection.cs" />
     <Compile Include="csFile\FilePathFinder.cs" />
-    <Compile Include="csFile\FileRevert.cs" />
+    <Compile Include="csFile\FileReverter.cs" />
     <Compile Include="csFile\FileSave.cs" />
     <Compile Include="csFile\FileStretcher.cs" />
     <Compile Include="csFile\LineChecker.cs" />
     <Compile Include="csFile\LineStretcher.cs" />
     <Compile Include="csFile\LogStore.cs" />
     <Compile Include="csFile\Options.cs" />
-    <Compile Include="csFile\PrintResult.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="csFile\ResultPrinter.cs" />
+    <Compile Include="csFile\Program.cs" />
     <Compile Include="Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>

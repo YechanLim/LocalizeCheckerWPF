@@ -22,7 +22,7 @@ namespace LocalizeChecker
         }
     };
 
-    class FileRevert
+    class FileReverter
     {
         public List<ReversionFailedFilesInfo> reversionFailedFilesInfos = new List<ReversionFailedFilesInfo>();
         public int index;

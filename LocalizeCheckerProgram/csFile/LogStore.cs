@@ -21,7 +21,6 @@ namespace LocalizeChecker
         public string Path { get; set; }
         public string Result { get; set; }
         public string Remark { get; set; }
-
         public string Blank { get; }
     }
 
@@ -79,8 +78,6 @@ namespace LocalizeChecker
                 logTableInfos[index].Remark = "";
             }
             Program.WriteToConsole($"\n  File: {filePaths.Count}  Success: {filePaths.Count - failedFileIndex}  Fail: {failedFileIndex}");
-            Console.WriteLine($"\n  File: {filePaths.Count}  Success: {filePaths.Count - failedFileIndex}  Fail: {failedFileIndex}");
-
             return logTableInfos;
         }
 

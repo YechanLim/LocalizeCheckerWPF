@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LocalizeChecker
 {
-    class PrintResult
+    class ResultPrinter
     {
         public static void PrintResultOfLocalizeChecker(List<string> filePaths, List<StretchingFailedFilesInfo> stretchingFailedFilesInfos)
         {
