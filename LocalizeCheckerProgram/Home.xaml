@@ -81,9 +81,9 @@
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Grid.Column="1" 
                     Margin="0,15,0,15">
             <StackPanel Orientation="Vertical" Margin="0,0,40,0">
-                <TextBlock Name ="restorationAlertText" Foreground="red" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Name ="reversionAlertText" Foreground="red" HorizontalAlignment="Center"></TextBlock>
                 <Button Style="{StaticResource buttonStyle}" Name="localizeRestorationButton"
-                Click="RestoreFiles_Button_Click" >
+                Click="RevertFiles_Button_Click" >
                 <ContentControl>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="\Images\restoration.png" Width="35"></Image>

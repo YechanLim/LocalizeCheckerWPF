@@ -6,6 +6,7 @@ using LocalizeChecker;
 using System.Windows.Documents;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using System.Threading;
 
 namespace LocalizeCheckerProgram
 {

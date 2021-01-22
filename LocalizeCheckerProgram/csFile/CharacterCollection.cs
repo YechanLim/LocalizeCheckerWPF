@@ -14,5 +14,6 @@ namespace LocalizeChecker
         public const char EndOfLineCharacter = '\n';
         public const char PrefixOfPredefinedEntity = '&';
         public const char PostfixOfPredefinedEntity = ';';
+        public const string LocalizerBackupFileExtention = ".#localizer#";
     }
 }

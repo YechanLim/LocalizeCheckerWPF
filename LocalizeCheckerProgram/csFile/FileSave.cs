@@ -13,7 +13,7 @@ namespace LocalizeChecker
             {
                 foreach (string filePath in filePaths)
                 {
-                    string destinationFile = filePath + ".#localizer#";
+                    string destinationFile = filePath + CharacterCollection.LocalizerBackupFileExtention;
                     if (File.Exists(destinationFile))
                     {
                         return false;
@@ -23,12 +23,12 @@ namespace LocalizeChecker
                 }
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Backup파일을 저장하는 중 오류가 발생했습니다. 원인: " + e.Message);
                 return false;
             }
-            }
+        }
 
     }
 }

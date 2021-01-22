@@ -9,6 +9,7 @@
       Title="Progress"
       ContentRendered="Window_ContentRendered"
         Width="700" Height="250"
+          Closing="DataWindow_Closing" 
       >
     <!--ShowsNavigationUI="False"-->
 

@@ -13,9 +13,8 @@ namespace LocalizeCheckerProgram
     {
         string fileSelectionMissingMessage = "선택된 파일이 없습니다.";
         string StretchingFailedMessage = "이미 변환된 파일입니다.";
-        string RestorationFailedMessage = "이미 복원된 파일입니다.";
+        string reversionFailedMessage = "이미 복원된 파일입니다.";
         public static string[] filePath;
-        public static bool isAsycStretch = false;
 
         public Home()
         {
@@ -33,62 +32,63 @@ namespace LocalizeCheckerProgram
                 filePathTextBlock.Text = openFileDialog.FileName;
                 filePathTextBlock.ToolTip = openFileDialog.FileName;
                 InitializeAlertText();
-                SetLogNumberText(0, 0);
+                SetLogNumberText(new LogTableInfo[0]);
                 MakeDataGrid(new LogTableInfo[0]);
             }
         }
 
-        private async void StretchFiles_Button_Click(object sender, RoutedEventArgs e)
+        private void StretchFiles_Button_Click(object sender, RoutedEventArgs e)
         {
             if (filePathTextBlock.Text == fileSelectionMissingMessage)
             {
                 stretchingAlertText.Text = fileSelectionMissingMessage;
                 return;
             }
+
             string[] filePath_temp = { filePathTextBlock.Text };
             filePath = filePath_temp;
-            isAsycStretch = true;
             Progress progressPage = new Progress();
+            progressPage.isAsycStretch = true;
             OpenProgressPage(progressPage);
 
-            if (progressPage.isAlreadyStretched)
+            if (progressPage.isAlreadyCompleted)
             {
-                SetLogNumberText(0, 0);
+                SetLogNumberText(progressPage.logTableInfos);
                 stretchingAlertText.Text = StretchingFailedMessage;
                 MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
 
-            SetLogNumberText(Program.filePaths.Count, FileStretcher.stretchFailedFilesInfos.Count);
+            SetLogNumberText(progressPage.logTableInfos);
             InitializeAlertText();
-            MakeDataGrid(Program.logTableInfos);
+            MakeDataGrid(progressPage.logTableInfos);
         }
 
-        private void RestoreFiles_Button_Click(object sender, RoutedEventArgs e)
+        private void RevertFiles_Button_Click(object sender, RoutedEventArgs e)
         {
             if (filePathTextBlock.Text == fileSelectionMissingMessage)
             {
-                restorationAlertText.Text = fileSelectionMissingMessage;
+                reversionAlertText.Text = fileSelectionMissingMessage;
                 return;
             }
 
             string[] filePath1 = { filePathTextBlock.Text };
             filePath = filePath1;
-            isAsycStretch = false;
             Progress progressPage = new Progress();
+            progressPage.isAsycStretch = false;
             OpenProgressPage(progressPage);
 
-            if (progressPage.isAlreadyRestored)
+            if (progressPage.isAlreadyCompleted)
             {
-                SetLogNumberText(0, 0);
-                restorationAlertText.Text = RestorationFailedMessage;
+                SetLogNumberText(progressPage.logTableInfos);
+                reversionAlertText.Text = reversionFailedMessage;
                 MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
 
-            SetLogNumberText(Program.filePaths.Count, FileRestore.restorationFailedFilesInfos.Count);
+            SetLogNumberText(progressPage.logTableInfos);
             InitializeAlertText();
-            MakeDataGrid(Program.logTableInfos);
+            MakeDataGrid(progressPage.logTableInfos);
         }
 
         private void OpenProgressPage(Progress progressPage)
@@ -100,22 +100,46 @@ namespace LocalizeCheckerProgram
 
         private void MakeDataGrid(LogTableInfo[] resultTableLogInfos)
         {
-            dataGrid.ItemsSource = resultTableLogInfos;
-            dataGrid.Columns[dataGrid.Columns.Count - 1].Header = "";
-            dataGrid.Columns[dataGrid.Columns.Count - 1].Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+            try
+            {
+                dataGrid.ItemsSource = resultTableLogInfos;
+                dataGrid.Columns[dataGrid.Columns.Count - 1].Header = "";
+                dataGrid.Columns[dataGrid.Columns.Count - 1].Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("DataGrid를 만드는데 오류가 발생했습니다. 원인: " + e.Message);
+            }
         }
 
-        private void SetLogNumberText(int total, int failure)
+        private void SetLogNumberText(LogTableInfo[] logTableInfos)
         {
-            fileNum.Text = total.ToString();
-            successfulFileNum.Text = (total - failure).ToString();
-            failedFileNum.Text = failure.ToString();
+            fileNum.Text = logTableInfos.Length.ToString();
+
+            if (logTableInfos.Length == 0)
+            {
+                successfulFileNum.Text = "0";
+                failedFileNum.Text = "0";
+                return;
+            }
+
+            int failedNum = 0;
+            foreach (LogTableInfo logTableInfo in logTableInfos)
+            {
+                if (logTableInfo.Result == "성공")
+                {
+                    continue;
+                }
+                failedNum++;
+            }
+            successfulFileNum.Text = (logTableInfos.Length - failedNum).ToString();
+            failedFileNum.Text = failedNum.ToString();
         }
 
         private void InitializeAlertText()
         {
             stretchingAlertText.Text = "";
-            restorationAlertText.Text = "";
+            reversionAlertText.Text = "";
         }
     }
 }

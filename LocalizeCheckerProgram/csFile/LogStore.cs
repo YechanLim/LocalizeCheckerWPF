@@ -12,14 +12,14 @@ namespace LocalizeChecker
         {
             Index = index;
             Path = path;
-            결과 = result;
+            Result = result;
             Remark = remark;
             Blank = "";
         }
 
         public int Index { get; set; }
         public string Path { get; set; }
-        public string 결과 { get; set; }
+        public string Result { get; set; }
         public string Remark { get; set; }
 
         public string Blank { get; }
@@ -27,7 +27,7 @@ namespace LocalizeChecker
 
     class LogStore
     {
-        public static LogTableInfo[] StoreLogOfStretcher(List<string> filePaths, List<StretchingFailedFilesInfo> stretchingFailedFilesInfos)
+        public LogTableInfo[] StoreLogOfStretcher(List<string> filePaths, List<StretchingFailedFilesInfo> stretchingFailedFilesInfos)
         {
             int failedFileIndex = 0;
             int index = -1;
@@ -41,21 +41,21 @@ namespace LocalizeChecker
 
                 if (failedFileIndex < stretchingFailedFilesInfos.Count && index == stretchingFailedFilesInfos[failedFileIndex].Index)
                 {
-                    logTableInfos[index].결과 = "실패\n원인: " + stretchingFailedFilesInfos[failedFileIndex].ResultMessage;
+                    logTableInfos[index].Result = "실패\n원인: " + stretchingFailedFilesInfos[failedFileIndex].ResultMessage;
                     logTableInfos[index].Remark = stretchingFailedFilesInfos[failedFileIndex].RemarkMessage;
                     failedFileIndex++;
-                    Console.WriteLine($"[실패]  {filePath}");
+                    Program.WriteToConsole($"[실패]  {filePath}");
                     continue;
                 }
-                Console.WriteLine($"[성공]  {filePath}");
-                logTableInfos[index].결과 = "성공";
+                Program.WriteToConsole($"[성공]  {filePath}");
+                logTableInfos[index].Result = "성공";
                 logTableInfos[index].Remark = "";
             }
-
+            Program.WriteToConsole($"\n  File: {filePaths.Count}  Success: {filePaths.Count - failedFileIndex}  Fail: {failedFileIndex}");
             return logTableInfos;
         }
 
-        public static LogTableInfo[] StoreLogOfRestorer(List<string> filePaths, List<RestorationFailedFilesInfo> restorationFailedFilesInfos)
+        public LogTableInfo[] StoreLogOfReverter(List<string> filePaths, List<ReversionFailedFilesInfo> reversionFailedFilesInfos)
         {
             int failedFileIndex = 0;
             int index = -1;
@@ -66,18 +66,20 @@ namespace LocalizeChecker
                 logTableInfos[index].Index = index + 1;
                 logTableInfos[index].Path = filePath;
 
-                if (failedFileIndex < restorationFailedFilesInfos.Count && index == restorationFailedFilesInfos[failedFileIndex].Index)
+                if (failedFileIndex < reversionFailedFilesInfos.Count && index == reversionFailedFilesInfos[failedFileIndex].Index)
                 {
-                    logTableInfos[index].결과 = "실패\n원인: " + restorationFailedFilesInfos[failedFileIndex].ResultMessage;
-                    logTableInfos[index].Remark = restorationFailedFilesInfos[failedFileIndex].RemarkMessage;
+                    logTableInfos[index].Result = "실패\n원인: " + reversionFailedFilesInfos[failedFileIndex].ResultMessage;
+                    logTableInfos[index].Remark = reversionFailedFilesInfos[failedFileIndex].RemarkMessage;
                     failedFileIndex++;
+                    Program.WriteToConsole($"[실패]  {filePath}");
                     continue;
                 }
-
-                logTableInfos[index].결과 = "성공";
+                Program.WriteToConsole($"[성공]  {filePath}");
+                logTableInfos[index].Result = "성공";
                 logTableInfos[index].Remark = "";
-
             }
+            Program.WriteToConsole($"\n  File: {filePaths.Count}  Success: {filePaths.Count - failedFileIndex}  Fail: {failedFileIndex}");
+            Console.WriteLine($"\n  File: {filePaths.Count}  Success: {filePaths.Count - failedFileIndex}  Fail: {failedFileIndex}");
 
             return logTableInfos;
         }

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.ComponentModel;
+using LocalizeCheckerProgram;
+using System.Threading;
+
 
 namespace LocalizeChecker
 {
@@ -24,11 +27,13 @@ namespace LocalizeChecker
         LineChecker lineChecker = new LineChecker();
         LineStretcher lineStretcher = new LineStretcher();
         public static List<StretchingFailedFilesInfo> stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();
-        public static int index;
+        public int index;
+        public bool isCanceled = false;
+
         bool isAlreadyStretchedFile = false;
         bool isFailedToInsertCharacters = false;
 
-        public void StretchFiles(List<string> filePaths, object sender)
+        public void StretchFiles(List<string> filePaths, BackgroundWorkerParameter backgroundWorkerParameter)
         {
             index = -1;
             stretchFailedFilesInfos = new List<StretchingFailedFilesInfo>();
@@ -104,19 +109,39 @@ namespace LocalizeChecker
                     stretchFailedFilesInfos.Add(new StretchingFailedFilesInfo(index, "resx 파일을 읽는데 오류가 발생했습니다.", $"{e.Message}"));
                     Console.WriteLine($"resx 파일을 읽는데 오류가 발생했습니다. 원인: {e.Message}");
                 }
-                for (int i = 0; i < 50000000; i++)
-                {
 
+                if (backgroundWorkerParameter.Sender != null)
+                {
+                    sendDataToBackgroundWorker(filePaths, filePath, backgroundWorkerParameter);
+
+                    if (backgroundWorkerParameter.Worker.CancellationPending && backgroundWorkerParameter.IsAsynStretch)
+                    {
+                        isCanceled = true;
+                        return;
+                    }
                 }
-                int percentProgress = (int)((index * 100) / (filePaths.Count - 1));
-                (sender as BackgroundWorker).ReportProgress(percentProgress, filePath);
             }
+        }
+
+        private void sendDataToBackgroundWorker(List<string> filePaths, string filePath, BackgroundWorkerParameter backgroundWorkerParameter)
+        {
+            Thread.Sleep(100);
+            if (backgroundWorkerParameter.Worker.CancellationPending && backgroundWorkerParameter.IsAsynStretch)
+            {
+                FileRevert fileRevert = new FileRevert();
+                fileRevert.RevertFiles(filePaths, backgroundWorkerParameter, false);
+                //backgroundWorkerParameter.args.Cancel = true;
+                Console.WriteLine("canceled");
+                return;
+            }
+            int percentProgress = (int)((index * 100) / (filePaths.Count - 1));
+            (backgroundWorkerParameter.Sender as BackgroundWorker).ReportProgress(percentProgress, filePath);
         }
 
         string lineToBeStretched = "";
         int ValueNodelineNum = 0;
 
-        string StretchLine(string line)
+        private string StretchLine(string line)
         {
             if (lineChecker.IsMultiLineValueNode)
             {
@@ -132,13 +157,13 @@ namespace LocalizeChecker
             }
 
             lineToBeStretched += line;
-            string stretchedLine = lineStretcher.InsertCharactersToStretchLine(lineToBeStretched, ValueNodelineNum);
+            string stretchedLine = lineStretcher.InsertCharactersToStretchLine(lineToBeStretched, ValueNodelineNum, index);
             lineToBeStretched = "";
             ValueNodelineNum = 0;
             return stretchedLine;
         }
 
-        void EraseDuplicatedFile(string file)
+        private void EraseDuplicatedFile(string file)
         {
             if (File.Exists(file))
             {
