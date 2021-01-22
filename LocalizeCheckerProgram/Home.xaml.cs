@@ -14,7 +14,7 @@ namespace LocalizeCheckerProgram
         string fileSelectionMissingMessage = "선택된 파일이 없습니다.";
         string StretchingFailedMessage = "이미 변환된 파일입니다.";
         string reversionFailedMessage = "이미 복원된 파일입니다.";
-        public static string[] filePath;
+        public static string filePath;
 
         public Home()
         {
@@ -45,23 +45,21 @@ namespace LocalizeCheckerProgram
                 return;
             }
 
-            string[] filePath_temp = { filePathTextBlock.Text };
-            filePath = filePath_temp;
-            Progress progressPage = new Progress();
-            progressPage.isAsycStretch = true;
-            OpenProgressPage(progressPage);
+            filePath = filePathTextBlock.Text;
+            Background background = new Background(filePath,true);
+            background.Start();
 
-            if (progressPage.isAlreadyCompleted)
+            if (background.isAlreadyCompleted)
             {
-                SetLogNumberText(progressPage.logTableInfos);
+                SetLogNumberText(background.logTableInfos);
                 stretchingAlertText.Text = StretchingFailedMessage;
                 MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
 
-            SetLogNumberText(progressPage.logTableInfos);
+            SetLogNumberText(background.logTableInfos);
             InitializeAlertText();
-            MakeDataGrid(progressPage.logTableInfos);
+            MakeDataGrid(background.logTableInfos);
         }
 
         private void RevertFiles_Button_Click(object sender, RoutedEventArgs e)
@@ -72,31 +70,24 @@ namespace LocalizeCheckerProgram
                 return;
             }
 
-            string[] filePath1 = { filePathTextBlock.Text };
-            filePath = filePath1;
-            Progress progressPage = new Progress();
-            progressPage.isAsycStretch = false;
-            OpenProgressPage(progressPage);
+            filePath = filePathTextBlock.Text;
+            Background background = new Background(filePath, false);
+            background.Start();
 
-            if (progressPage.isAlreadyCompleted)
+
+            if (background.isAlreadyCompleted)
             {
-                SetLogNumberText(progressPage.logTableInfos);
+                SetLogNumberText(background.logTableInfos);
                 reversionAlertText.Text = reversionFailedMessage;
                 MakeDataGrid(new LogTableInfo[0]);
                 return;
             }
 
-            SetLogNumberText(progressPage.logTableInfos);
+            SetLogNumberText(background.logTableInfos);
             InitializeAlertText();
-            MakeDataGrid(progressPage.logTableInfos);
+            MakeDataGrid(background.logTableInfos);
         }
 
-        private void OpenProgressPage(Progress progressPage)
-        {
-            progressPage.Owner = Window.GetWindow(this);
-            progressPage.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            progressPage.ShowDialog();
-        }
 
         private void MakeDataGrid(LogTableInfo[] resultTableLogInfos)
         {

@@ -89,6 +89,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Background.cs" />
     <Compile Include="csFile\MessageBoxHelper.cs" />
     <Compile Include="csFile\CharacterCollection.cs" />
     <Compile Include="csFile\FilePathFinder.cs" />

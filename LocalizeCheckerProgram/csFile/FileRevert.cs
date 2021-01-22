@@ -81,7 +81,6 @@ namespace LocalizeChecker
 
         private void SwitchFile(string a, string b)
         {
-
             string temp = "temp.txt";
             File.Copy(a, temp, true);
             File.Copy(b, a, true);
@@ -95,6 +94,7 @@ namespace LocalizeChecker
             if (backgroundWorkerParameter.Worker.CancellationPending && !backgroundWorkerParameter.IsAsynStretch && !isRevertingMode)
             {
                 RevertFiles(filePaths.GetRange(0, index), backgroundWorkerParameter, true);
+                backgroundWorkerParameter.Args.Cancel = true;
                 return;
             }
             int percentProgress = (int)((index * 100) / (filePaths.Count - 1));

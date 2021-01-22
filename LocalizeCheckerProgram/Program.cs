@@ -15,10 +15,10 @@ namespace LocalizeChecker
     {
         static List<string> filePaths = new List<string>();
 
-        public static LogTableInfo[] Stretch(string[] args, BackgroundWorkerParameter backgroundWorkerParameter)
+        public static LogTableInfo[] Stretch(string filePath, BackgroundWorkerParameter backgroundWorkerParameter)
         {
-            string solutionFilePath = args[0];
-            filePaths = FilePathFinder.GetResxFilePathList(FilePathFinder.GetCSprojFilePathList(solutionFilePath));
+            
+            filePaths = FilePathFinder.GetResxFilePathList(FilePathFinder.GetCSprojFilePathList(filePath));
             LogStore logStore = new LogStore();
             LogTableInfo[] logTableInfos = new LogTableInfo[0];
 
@@ -40,10 +40,9 @@ namespace LocalizeChecker
             return logTableInfos;
         }
 
-        public static LogTableInfo[] Revert(string[] args, BackgroundWorkerParameter backgroundWorkerParameter)
+        public static LogTableInfo[] Revert(string filePath, BackgroundWorkerParameter backgroundWorkerParameter)
         {
-            string solutionFilePath = args[0];
-            filePaths = FilePathFinder.GetResxFilePathList(FilePathFinder.GetCSprojFilePathList(solutionFilePath));
+            filePaths = FilePathFinder.GetResxFilePathList(FilePathFinder.GetCSprojFilePathList(filePath));
             LogTableInfo[] logTableInfos = new LogTableInfo[0];
             FileRevert fileRevert = new FileRevert();
 
@@ -81,16 +80,14 @@ namespace LocalizeChecker
                 CommandLine.Parser.Default.ParseArguments<Options>(args)
                .WithParsed<Options>(opt =>
                {
-                   //WriteToConsole("");
-                   string[] targetFilePath = { opt.FilePath };
                    BackgroundWorkerParameter backgroundWorkerParameter = new BackgroundWorkerParameter();
                    if (opt.Stretch)
                    {
-                       Stretch(targetFilePath, backgroundWorkerParameter);
+                       Stretch(opt.FilePath, backgroundWorkerParameter);
                    }
                    else if (opt.Revert)
                    {
-                       Revert(targetFilePath, backgroundWorkerParameter);
+                       Revert(opt.FilePath, backgroundWorkerParameter);
                    }
 
                })
